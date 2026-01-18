@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("🚀 DOM loaded");
 
-    const API_BASE_URL = "http://localhost:5000";
+    const API_BASE_URL = "https://chalosafe-production.up.railway.app";
+
 
     const signupContainer = document.getElementById("signup-container");
     const signinContainer = document.getElementById("signin-container");
