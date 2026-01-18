@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChaloSafe - Find Safe Routes</title>
+    
+   
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="ChaloSafe Logo" class="logo">
+        <h1 class="title">ChaloSafe - Find Your Safe Route</h1>
+    </header>
+
+    <div id="auth-container">
+        <div id="signup-container" class="auth-box">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input type="text" id="username" placeholder="Enter your name" required>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <input type="password" id="password" placeholder="Create a password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="show-signin">Sign In</a></p>
+        </div>
+
+        <div id="signin-container" class="auth-box hidden">
+            <h2>Sign In</h2>
+            <form id="signin-form">
+                <input type="email" id="signin-email" placeholder="Enter your email" required>
+                <input type="password" id="signin-password" placeholder="Enter your password" required>
+                <button type="submit">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <section class="form-container">
+            <h2>Enter Your Travel Details</h2>
+            <form id="route-form">
+                <label for="current-location">Current Location:</label>
+                <input type="text" id="current-location" placeholder="Enter Current Location" required>
+
+                <label for="destination">Destination:</label>
+                <input type="text" id="destination" placeholder="Enter Destination" required>
+
+                <label for="travel-mode">Travel Mode:</label>
+                <select id="travel-mode">
+                    <option value="driving-car">Car</option>
+                    <option value="cycling-regular">Bike</option>
+                    <option value="foot-walking">Walking</option>
+                </select>
+
+                <button type="submit">Find Safe Route</button>
+            </form>
+        </section>
+    </div>
+
+    <div id="map-container" class="hidden">
+        <section class="map-section">
+            <div id="map"></div>
+            <div id="route-info" class="hidden">
+                <h3>Route Information</h3>
+                <p><strong>Travel Time:</strong> <span id="travel-time">N/A</span></p>
+                <p><strong>Safety Score:</strong> <span id="safety-score">N/A</span></p>
+            </div>
+        </section>
+    </div>
+
+   
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

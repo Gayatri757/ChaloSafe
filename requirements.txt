@@ -1,0 +1,10 @@
+Flask
+pandas
+numpy
+scikit-learn
+requests
+joblib
+openrouteservice
+flask-cors
+python-dotenv
+gunicorn
