@@ -1,138 +1,78 @@
-# 🛡️ ChaloSafe - Safe Route Recommendation System
+# 🚦 ChaloSafe – Safe Route Recommendation System
 
-A Flask-based web application that recommends safer travel routes by combining route generation with historical crime data. The application integrates geocoding and routing APIs to calculate a safety score for the generated route and display it on an interactive map.
+ChaloSafe is a web-based Safe Route Recommendation System that helps users estimate the relative safety of a travel route by combining crime data with route planning.
 
-> **Note:** This project was developed as an academic prototype. The crime dataset used is **synthetically generated** for demonstration purposes.
+Unlike traditional navigation systems that primarily optimize travel time or distance, ChaloSafe considers nearby crime density to provide a route risk estimate, enabling users to make more informed travel decisions.
+
+This project was developed using **Python (Flask)** for the backend and **HTML, CSS, and JavaScript** for the frontend.
 
 ---
 
 ## 📌 Problem Statement
 
-Traditional navigation systems recommend the shortest or fastest route without considering the safety of travelers. ChaloSafe addresses this limitation by analyzing crime statistics near a route and providing users with additional safety information to support informed travel decisions.
+Navigation applications usually recommend the fastest or shortest path without considering public safety.
+
+ChaloSafe addresses this problem by estimating the risk associated with a route using nearby crime statistics. The application calculates a Route Risk Score based on crime density around the generated path and presents the safest available route to the user.
 
 ---
 
 ## ✨ Features
 
-- 📍 Convert source and destination into geographic coordinates.
-- 🗺️ Generate travel routes using OpenRouteService.
-- 🔒 Calculate a route safety score based on nearby crime data.
-- 📊 Display travel duration and safety score.
-- 🌍 Interactive map using Leaflet and OpenStreetMap.
-- 🤖 Random Forest model for crime risk classification.
-- ⚡ RESTful backend built with Flask.
+- User Sign Up and Sign In (Browser Local Storage)
+- Search routes between any two locations
+- Supports multiple travel modes
+  - 🚗 Driving
+  - 🚶 Walking
+  - 🚴 Cycling
+- Convert location names into coordinates using Nominatim
+- Generate routes using OpenRouteService
+- Interactive map visualization using Leaflet.js
+- Route Risk estimation using nearby crime statistics
+- Displays:
+  - Travel Time
+  - Route Risk Score
+  - Risk Level (Low / Medium / High)
 
 ---
 
-# 🛠️ Tech Stack
+## 🛠 Tech Stack
 
 ### Backend
+
 - Python
 - Flask
 - Flask-CORS
+- Pandas
+- Requests
+- Joblib
+- python-dotenv
+- OpenRouteService Python SDK
 
 ### Frontend
-- HTML
-- CSS
+
+- HTML5
+- CSS3
 - JavaScript
 - Leaflet.js
-
-### Machine Learning
-- Scikit-learn
-- Random Forest Classifier
-- Joblib
-
-### Data Processing
-- Pandas
-- NumPy
+- OpenStreetMap
 
 ### APIs
-- OpenRouteService API
-- Nominatim (OpenStreetMap)
+
+- Nominatim Geocoding API
+- OpenRouteService Directions API
 
 ---
 
-# 🏗️ System Architecture
+## 📂 Project Structure
 
-```text
-                  User
-                    │
-                    ▼
-        HTML + CSS + JavaScript
-                    │
-           HTTP POST Request
-                    │
-                    ▼
-              Flask Backend
-                    │
-      ┌─────────────┼──────────────┐
-      ▼             ▼              ▼
- Nominatim API  OpenRouteService   Crime Dataset
-  (Geocoding)      (Routing)        (CSV)
-      │             │
-      └─────────────┼──────────────┘
-                    ▼
-         Safety Score Calculation
-                    ▼
-           JSON Response Returned
-                    ▼
-        Route Displayed on Leaflet
 ```
-
----
-
-# ⚙️ How It Works
-
-1. User enters the source and destination.
-2. The frontend sends the request to the Flask backend.
-3. Nominatim converts place names into latitude and longitude.
-4. OpenRouteService generates the travel route.
-5. Crime records near the generated route are identified.
-6. A custom safety score is calculated using crime density.
-7. The backend returns the route geometry, duration, and safety score.
-8. The frontend displays the recommended route on the map.
-
----
-
-# 🧠 Algorithms Used
-
-### Geocoding
-- Nominatim API converts place names into latitude and longitude coordinates.
-
-### Route Generation
-- OpenRouteService Routing API generates routes between two locations.
-
-### Custom Route Safety Algorithm
-The backend:
-- Extracts route coordinates.
-- Finds nearby crime records using latitude and longitude filtering.
-- Calculates the total crime density.
-- Normalizes the value to generate a safety score.
-- Returns the safety score along with travel duration.
-
-### Machine Learning
-A Random Forest classifier is trained to classify locations into:
-
-- 🟢 Low Risk
-- 🟡 Medium Risk
-- 🔴 High Risk
-
-Features Used:
-- Latitude
-- Longitude
-- Crime per Area
-
----
-
-# 📂 Project Structure
-
-```text
 ChaloSafe/
 │
 ├── frontend/
 │   ├── index.html
 │   ├── style.css
-│   └── script.js
+│   ├── script.js
+│   └── assets/
 │
 ├── app.py
 ├── crime_data.csv
@@ -145,185 +85,256 @@ ChaloSafe/
 
 ---
 
-# 📊 Dataset
+## ⚙️ How It Works
 
-The project uses a **synthetic crime dataset** created for educational and prototype purposes.
+### Step 1
 
-The dataset contains:
+The user signs in and enters:
+
+- Current Location
+- Destination
+- Travel Mode
+
+---
+
+### Step 2
+
+The backend converts the entered place names into latitude and longitude using the **Nominatim Geocoding API**.
+
+---
+
+### Step 3
+
+The coordinates are sent to the **OpenRouteService Directions API**, which generates the travel route and estimates the travel duration.
+
+---
+
+### Step 4
+
+The generated route consists of multiple coordinate points.
+
+The backend checks the crime dataset for locations lying close to the generated route.
+
+---
+
+### Step 5
+
+Nearby crime density (`crime_per_area`) is aggregated and normalized to calculate a **Route Risk Score**.
+
+Risk Classification:
+
+| Route Risk | Level |
+|------------|-------|
+| 0 – 4 | 🟢 Low Risk |
+| 4 – 7 | 🟡 Medium Risk |
+| 7 – 10 | 🔴 High Risk |
+
+---
+
+### Step 6
+
+The frontend displays:
+
+- Recommended Route
+- Interactive Map
+- Estimated Travel Time
+- Route Risk Score
+- Risk Level
+
+---
+
+## 🧠 Algorithms Used
+
+### 1. Geocoding
+
+**Nominatim OpenStreetMap API**
+
+Converts user-entered place names into latitude and longitude coordinates.
+
+---
+
+### 2. Route Generation
+
+**OpenRouteService Directions API**
+
+Generates the travel route based on:
+
+- Source
+- Destination
+- Travel Mode
+
+---
+
+### 3. Route Risk Calculation
+
+For every generated route:
+
+1. Extract all route coordinates.
+2. Search nearby crime locations within approximately ±0.02° latitude and longitude.
+3. Sum nearby `crime_per_area` values.
+4. Normalize the value to a score between **0–10**.
+5. Display the calculated Route Risk Score.
+
+---
+
+### 4. Route Ranking
+
+Routes are sorted according to their calculated risk score.
+
+Routes with lower risk values are considered safer.
+
+---
+
+## 🤖 Machine Learning
+
+The project also includes a **Random Forest Classifier** trained using:
+
+- Latitude
+- Longitude
+- Crime Per Area
+
+The model (`crime_model.pkl`) classifies crime-risk levels.
+
+> **Note:** The trained model is included as part of the project. In the current implementation, route recommendation is based on crime-density calculations from the dataset rather than direct model predictions.
+
+---
+
+## 📊 Dataset
+
+The project uses a sample dataset (`crime_data.csv`) containing information such as:
 
 - Area Name
 - Latitude
 - Longitude
 - Murder Cases
 - Theft Cases
-- Robbery Cases
 - Assault Cases
+- Robbery Cases
 - Sexual Harassment Cases
-- Total Crimes
-- Crime per Area
+- Total Crime
+- Crime Per Area
 
-The synthetic data demonstrates how crime-aware route recommendation can be implemented. In a production environment, this dataset can be replaced with verified crime records from official government or law enforcement sources.
-
----
-
-# 👩‍💻 My Contribution
-
-I was responsible for the backend development of the project.
-
-My contributions include:
-
-- Developed the Flask backend.
-- Designed REST API endpoints.
-- Integrated the frontend with the backend using Fetch API and JSON.
-- Integrated Nominatim API for geocoding.
-- Integrated OpenRouteService API for route generation.
-- Implemented the custom route safety scoring algorithm.
-- Processed the crime dataset using Pandas.
-- Trained and integrated a Random Forest model for crime risk classification.
-- Added error handling and API validation.
-- Assisted in deployment configuration.
+> **Note:** The dataset used in this project is AI-generated for educational and demonstration purposes and does not represent official crime statistics.
 
 ---
 
-# 🚀 Installation
+## 🌍 APIs Used
 
-Clone the repository
+### Nominatim
+
+Used to convert user-entered place names into geographic coordinates.
+
+---
+
+### OpenRouteService
+
+Used for route generation and travel time estimation.
+
+---
+
+### OpenStreetMap + Leaflet
+
+Used to visualize routes on an interactive map.
+
+---
+
+## 🚀 Installation
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/Gayatri757/ChaloSafe.git
 ```
 
-Navigate to the project directory
+Move into the project directory:
 
 ```bash
 cd ChaloSafe
 ```
 
-Install dependencies
+Create a virtual environment:
+
+```bash
+python -m venv venv
+```
+
+Activate it:
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+### Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create a `.env` file
+Create a `.env` file:
 
 ```env
 OPENROUTESERVICE_API_KEY=YOUR_API_KEY
 ```
 
-Run the application
+Run the application:
 
 ```bash
 python app.py
 ```
 
-Open your browser
+Open your browser:
 
 ```
-http://127.0.0.1:5000
-```
-
----
-
-# 📡 API Endpoint
-
-### POST `/recommend_route`
-
-#### Request
-
-```json
-{
-  "start": "Swargate",
-  "end": "Kothrud",
-  "mode": "driving-car"
-}
-```
-
-#### Response
-
-```json
-{
-  "routes": [
-    {
-      "geometry": { ... },
-      "duration": 520,
-      "safety_score": 6.8,
-      "final_score": 7.1
-    }
-  ]
-}
+http://localhost:5000
 ```
 
 ---
 
-# 📸 Screenshots
+## 📸 Screenshots
 
-## Home Page
+### Sign Up
 
-> Add a screenshot here.
-
-## Route Recommendation
-
-> Add a screenshot here.
-
-## Interactive Map
-
-> Add a screenshot here.
+(Add screenshot here)
 
 ---
 
-# ⚠️ Challenges Faced
+### Login
 
-- Integrating multiple third-party APIs.
-- Handling geocoding failures and invalid locations.
-- Designing a custom algorithm to estimate route safety.
-- Processing crime data efficiently.
-- Managing API keys securely during deployment.
+(Add screenshot here)
 
 ---
 
-# 🚀 Future Enhancements
+### Route Search
 
-- Integrate official crime datasets.
-- Add real-time crime and traffic information.
-- Implement GPS-based live navigation.
-- Use PostgreSQL/PostGIS for efficient spatial queries.
-- Improve the machine learning model using additional real-world features.
-- Add user authentication and profile management.
+(Add screenshot here)
 
 ---
 
-# 📚 Learning Outcomes
+### Route Recommendation
 
-Through this project, I gained practical experience in:
-
-- Backend development using Flask
-- REST API development
-- Third-party API integration
-- Data processing with Pandas
-- Machine Learning model integration
-- JSON-based client-server communication
-- Deployment of Python web applications
+(Add screenshot here)
 
 ---
 
-# 👤 Author
+## 🔮 Future Enhancements
+
+- Use official real-time crime datasets
+- Integrate live police APIs
+- Improve route ranking using machine learning predictions
+- Crime heatmap visualization
+- Real-time traffic integration
+- Emergency SOS functionality
+- User profile management with a database
+- Mobile application support
+
+---
+
+## 👩‍💻 Author
 
 **Gayatri Adatiya**
 
-B.E. Artificial Intelligence & Data Science
+AI & Data Science Student | Python Developer
 
-PES Modern College of Engineering, Pune
-
-GitHub: https://github.com/Gayatri757
-
----
-
-# 🙏 Acknowledgements
-
-- Flask
-- OpenStreetMap
-- Nominatim
-- OpenRouteService
-- Scikit-learn
-- Leaflet.js
+GitHub: https://github.com/Gayatri757/ChaloSafe
