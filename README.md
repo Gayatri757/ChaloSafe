@@ -319,7 +319,7 @@ http://localhost:5000
 
 ## Sign In
 
-![Sign In](frontend/chalo_signin.png)
+![Sign In](frontend/chalosafe_signin.png)
 
 ---
 
