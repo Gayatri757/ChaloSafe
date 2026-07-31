@@ -1,12 +1,9 @@
 Flask
-flask-cors
+Flask-Cors
+python-dotenv
+requests
+openrouteservice
 pandas
 numpy
 scikit-learn
-geopy
-folium
-python-dotenv
-openrouteservice
-requests
 joblib
-gunicorn
