@@ -313,25 +313,25 @@ http://localhost:5000
 
 ## Sign Up
 
-*(Add screenshot)*
+![Sign Up](frontend/chalosafe_signup.png)
 
 ---
 
 ## Sign In
 
-*(Add screenshot)*
+![Sign In](frontend/chalo_signin.png)
 
 ---
 
 ## Route Search
 
-*(Add screenshot)*
+![Route Search](frontend/chalosafe_search_route.png)
 
 ---
 
 ## Route Recommendation
 
-*(Add screenshot)*
+![Results](frontend/chalosafe_route_result.png)
 
 ---
 
