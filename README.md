@@ -24,9 +24,9 @@ ChaloSafe addresses this limitation by analyzing nearby crime statistics and est
   - 🚗 Driving
   - 🚶 Walking
   - 🚴 Cycling
-- Location geocoding using Nominatim API
+- Location geocoding using the Nominatim API
 - Route generation using OpenRouteService
-- Interactive route visualization using Leaflet.js
+- Interactive map visualization using Leaflet.js
 - Route Risk estimation using nearby crime statistics
 - Displays:
   - Travel Time
@@ -80,8 +80,7 @@ ChaloSafe/
 ├── train_model.py
 ├── requirements.txt
 ├── README.md
-├── .gitignore
-└── .env.example
+└── .gitignore
 ```
 
 ---
@@ -106,16 +105,16 @@ The coordinates are sent to the **OpenRouteService Directions API**, which gener
 
 ### Step 4
 
-The generated route contains multiple coordinate points.
+The generated route consists of multiple coordinate points.
 
-For each route, nearby crime records are extracted from the dataset based on geographic proximity.
+Nearby crime records are extracted from the dataset based on geographic proximity to the generated route.
 
 ### Step 5
 
 The application calculates a **Route Risk Score** by:
 
 - Finding nearby crime records
-- Summing their crime density values (`crime_per_area`)
+- Aggregating their `crime_per_area` values
 - Normalizing the result to a score between **0 and 10**
 
 ### Step 6
@@ -131,13 +130,13 @@ The frontend displays:
 
 # 🚦 Route Risk Classification
 
-| Route Risk | Level |
-|------------|-------|
+| Route Risk | Risk Level |
+|------------|------------|
 | 0 – 4 | 🟢 Low Risk |
 | 4 – 7 | 🟡 Medium Risk |
 | 7 – 10 | 🔴 High Risk |
 
-Lower Route Risk indicates a comparatively safer route.
+A **lower Route Risk Score indicates a comparatively safer route.**
 
 ---
 
@@ -170,36 +169,36 @@ For each generated route:
 - Extract route coordinates.
 - Search nearby crime locations within approximately ±0.02° latitude and longitude.
 - Aggregate nearby `crime_per_area` values.
-- Normalize the result to a Route Risk score between **0 and 10**.
+- Normalize the result to a Route Risk score between **0–10**.
 - Rank routes according to their calculated risk.
 
-Routes with lower risk scores are considered safer.
+Routes with **lower risk scores are considered safer**.
 
 ---
 
 # 🤖 Machine Learning Experimentation
 
-As part of the project development, a **Random Forest Classifier** was trained to classify crime-risk levels using the following features:
+During development, a **Random Forest Classifier** was trained to classify crime-risk levels using:
 
 - Latitude
 - Longitude
 - Crime Per Area
 
-The training code is provided in **train_model.py**, and the trained model is stored as **crime_model.pkl**.
+The training code is available in **train_model.py**, and the trained model is stored as **crime_model.pkl**.
 
-**Current Implementation**
+### Current Implementation
 
-The deployed application **does not use the Random Forest model for route recommendation**.
+The current version of ChaloSafe **does not use the trained machine learning model** for route recommendation.
 
-Instead, route risk is calculated directly from nearby crime-density values (`crime_per_area`) to provide a transparent and deterministic risk estimate.
+Instead, route risk is calculated directly from nearby crime-density values (`crime_per_area`), providing a transparent and deterministic risk estimate.
 
-The machine learning model has been retained in the repository as an experimental component and for future enhancements.
+The Random Forest model has been retained in the repository as an experimental component for future improvements.
 
 ---
 
 # 📊 Dataset
 
-The project uses a sample dataset (`crime_data.csv`) containing information such as:
+The project uses a sample dataset (`crime_data.csv`) containing attributes such as:
 
 - Area Name
 - Latitude
@@ -220,7 +219,7 @@ The project uses a sample dataset (`crime_data.csv`) containing information such
 
 ## Nominatim
 
-Used to convert user-entered place names into geographic coordinates.
+Used to convert place names into geographic coordinates.
 
 ---
 
@@ -235,7 +234,7 @@ Used for:
 
 ## OpenStreetMap + Leaflet
 
-Used to display routes on an interactive map.
+Used to display interactive route maps.
 
 ---
 
@@ -259,7 +258,7 @@ cd ChaloSafe
 python -m venv venv
 ```
 
-## Activate it
+## Activate the virtual environment
 
 ### Windows
 
@@ -285,7 +284,7 @@ pip install -r requirements.txt
 OPENROUTESERVICE_API_KEY=YOUR_API_KEY
 ```
 
-## Run the backend
+## Run the Flask backend
 
 ```bash
 python app.py
@@ -301,7 +300,7 @@ frontend/index.html
 
 or run it using **VS Code Live Server**.
 
-The frontend communicates with the Flask backend running on:
+The frontend communicates with the Flask backend running at:
 
 ```
 http://localhost:5000
@@ -342,10 +341,10 @@ http://localhost:5000
 - Crime heatmap visualization
 - Live traffic integration
 - Emergency SOS feature
-- User authentication using a database
+- Database-backed user authentication
 - Personalized route recommendations
 - Mobile application
-- Integrate the experimental machine learning model into the route recommendation pipeline
+- Integration of the experimental machine learning model into the route recommendation pipeline
 
 ---
 
@@ -357,4 +356,4 @@ B.E. Artificial Intelligence & Data Science
 
 Python Developer | AI & ML Enthusiast
 
-GitHub: **https://github.com/Gayatri757/ChaloSafe**
+GitHub: https://github.com/Gayatri757/ChaloSafe
