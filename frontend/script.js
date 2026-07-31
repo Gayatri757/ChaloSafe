@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("🚀 DOM loaded");
 
-    const API_BASE_URL = "https://chalosafe-production.up.railway.app";
-
+    const API_BASE_URL = "http://localhost:5000";
 
     const signupContainer = document.getElementById("signup-container");
     const signinContainer = document.getElementById("signin-container");
@@ -10,8 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const appContainer = document.getElementById("app-container");
     const mapContainer = document.getElementById("map-container");
     const routeInfoContainer = document.getElementById("route-info");
+
     const travelTimeElement = document.getElementById("travel-time");
-    const safetyScoreElement = document.getElementById("safety-score");
+    const routeRiskElement = document.getElementById("route-risk");
 
     let map;
     let routeLayers = [];
@@ -24,8 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initMap() {
-        if (map) return; 
-        map = L.map("map").setView([28.6139, 77.2090], 12); 
+        if (map) return;
+
+        map = L.map("map").setView([28.6139, 77.2090], 12);
+
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: "© OpenStreetMap contributors"
         }).addTo(map);
@@ -51,12 +53,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             console.log("📡 Sending route request...", routeRequest);
+
             travelTimeElement.textContent = "Loading...";
-            safetyScoreElement.textContent = "Loading...";
+            routeRiskElement.textContent = "Loading...";
 
             const response = await fetch(`${API_BASE_URL}/recommend_route`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(routeRequest)
             });
 
@@ -66,16 +71,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!response.ok) {
                 console.error("🚨 API error:", data);
+
                 alert(`❌ ${data.error || "Unknown server error"}`);
+
                 travelTimeElement.textContent = "N/A";
-                safetyScoreElement.textContent = "N/A";
+                routeRiskElement.textContent = "N/A";
                 return;
             }
 
             console.log("🗺️ Full route response:", data);
-            const routes = data.routes || [data.best_route];
 
-            if (!routes || routes.length === 0) {
+            const routes = data.routes || [];
+
+            if (routes.length === 0) {
                 alert("⚠ No routes found.");
                 return;
             }
@@ -83,14 +91,17 @@ document.addEventListener("DOMContentLoaded", function () {
             routeLayers.forEach(layer => map.removeLayer(layer));
             routeLayers = [];
 
-            routes.sort((a, b) => a.safety_score - b.safety_score);
+            // Lower route risk = safer
+            routes.sort((a, b) => a.route_risk - b.route_risk);
 
             routes.forEach((route, index) => {
+
                 const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+
                 const color = index === 0 ? "green" : "gray";
 
                 const polyline = L.polyline(coords, {
-                    color,
+                    color: color,
                     weight: 5,
                     opacity: 0.8
                 }).addTo(map);
@@ -98,80 +109,153 @@ document.addEventListener("DOMContentLoaded", function () {
                 routeLayers.push(polyline);
 
                 if (index === 0) {
+
                     map.fitBounds(polyline.getBounds());
-                    travelTimeElement.textContent = `${(route.duration / 60).toFixed(2)} mins`;
-                    safetyScoreElement.textContent = route.safety_score.toFixed(2);
+
+                    travelTimeElement.textContent =
+                        `${(route.duration / 60).toFixed(2)} mins`;
+
+                    const risk = route.route_risk;
+
+                    let riskLevel = "";
+
+                    if (risk < 4) {
+    riskLevel = "Low";
+}
+else if (risk < 7) {
+    riskLevel = "Medium";
+}
+else {
+    riskLevel = "High";
+}
+
+                    routeRiskElement.textContent =
+                        `${risk.toFixed(2)} / 10 (${riskLevel} Risk)`;
                 }
+
             });
 
             toggleVisibility(routeInfoContainer, true);
+
         } catch (error) {
+
             console.error("❌ Fetch error:", error);
+
             alert("🚫 Could not connect to the server. Is the backend running?");
+
             travelTimeElement.textContent = "N/A";
-            safetyScoreElement.textContent = "N/A";
+            routeRiskElement.textContent = "N/A";
         }
     }
 
-    
+    // ------------------------
+    // SIGN UP
+    // ------------------------
+
     document.getElementById("signup-form").addEventListener("submit", (e) => {
+
         e.preventDefault();
+
         const username = document.getElementById("username").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
         if (localStorage.getItem(email)) {
+
             alert("⚠ User already exists! Please sign in.");
+
             toggleVisibility(signupContainer, false);
             toggleVisibility(signinContainer, true);
+
             document.getElementById("signin-email").focus();
+
         } else {
-            localStorage.setItem(email, JSON.stringify({ username, email, password }));
+
+            localStorage.setItem(
+                email,
+                JSON.stringify({
+                    username,
+                    email,
+                    password
+                })
+            );
+
             alert("✅ Sign-up successful! Please sign in.");
+
             toggleVisibility(signupContainer, false);
             toggleVisibility(signinContainer, true);
+
             document.getElementById("signin-email").focus();
         }
     });
 
-    
+    // ------------------------
+    // SIGN IN
+    // ------------------------
+
     document.getElementById("signin-form").addEventListener("submit", (e) => {
+
         e.preventDefault();
+
         const email = document.getElementById("signin-email").value;
         const password = document.getElementById("signin-password").value;
 
         const userData = localStorage.getItem(email);
+
         if (userData) {
+
             const user = JSON.parse(userData);
+
             if (user.password === password) {
+
                 alert("✅ Sign-in successful!");
+
                 toggleVisibility(authContainer, false);
                 toggleVisibility(appContainer, true);
                 toggleVisibility(mapContainer, true);
-                initMap(); 
+
+                initMap();
+
             } else {
+
                 alert("❌ Incorrect password.");
             }
+
         } else {
+
             alert("❌ User not found. Please sign up.");
         }
+
     });
 
-    
+    // ------------------------
+    // TOGGLE LOGIN / SIGNUP
+    // ------------------------
+
     document.getElementById("show-signin").addEventListener("click", (e) => {
+
         e.preventDefault();
+
         toggleVisibility(signupContainer, false);
         toggleVisibility(signinContainer, true);
+
         document.getElementById("signin-email").focus();
     });
 
     document.getElementById("show-signup").addEventListener("click", (e) => {
+
         e.preventDefault();
+
         toggleVisibility(signinContainer, false);
         toggleVisibility(signupContainer, true);
+
         document.getElementById("username").focus();
     });
 
-    
+    // ------------------------
+    // ROUTE FORM
+    // ------------------------
+
     document.getElementById("route-form").addEventListener("submit", handleSubmit);
+
 });
